@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../App';
 import {
@@ -13,7 +13,7 @@ import {
 } from '../ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
-import { Hop as Home, FileText, Sparkles, ChartBar as BarChart3, Circle as HelpCircle, Calendar, LogOut } from 'lucide-react';
+import { Hop as Home, FileText, Sparkles, ChartBar as BarChart3, Circle as HelpCircle, Calendar, LogOut, ClipboardList, TrendingUp } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { Logo } from '../ui/Logo';
 // Add this import at the top of TeacherSidebar.tsx
@@ -45,6 +45,16 @@ export function TeacherSidebar() {
       title: t('teacher.sidebar.contentEnhancer'),
       url: '/teacher/content-enhancer',
       icon: Sparkles,
+    },
+    {
+      title: 'Assignment Manager',
+      url: '/teacher/assignment-manager',
+      icon: ClipboardList,
+    },
+    {
+      title: 'Assignment Analytics',
+      url: '/teacher/assignment-analytics',
+      icon: TrendingUp,
     },
     {
       title: t('teacher.sidebar.schedule'),

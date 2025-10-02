@@ -8,6 +8,8 @@ import { ContentEnhancer } from './ContentEnhancer';
 import { ScheduledContentDelivery } from './ScheduledContentDelivery';
 import { PerformanceTracker } from './PerformanceTracker';
 import { DoubtSolverAI } from './DoubtSolverAI';
+import { AssignmentManager } from './AssignmentManager';
+import { AssignmentAnalytics } from './AssignmentAnalytics';
 import { SidebarProvider } from '../ui/sidebar';
 
 export function TeacherDashboard() {
@@ -23,6 +25,8 @@ export function TeacherDashboard() {
               <Route path="/profile" element={<TeacherProfile />} />
               <Route path="/worksheet-generator" element={<WorksheetGenerator />} />
               <Route path="/content-enhancer" element={<ContentEnhancer />} />
+              <Route path="/assignment-manager" element={<AssignmentManager />} />
+              <Route path="/assignment-analytics" element={<AssignmentAnalytics />} />
               <Route path="/scheduled-content" element={<ScheduledContentDelivery />} />
               <Route path="/performance-tracker" element={<PerformanceTracker />} />
               <Route path="/doubt-solver" element={<DoubtSolverAI />} />

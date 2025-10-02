@@ -3,7 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { StudentSidebar } from './StudentSidebar';
 import { StudentDashboardHome } from './StudentDashboardHome';
 import { StudentProfile } from './StudentProfile';
-import { StudentAssignments } from './StudentAssignments';
+import { SubmissionPortal } from './SubmissionPortal';
+import { StudentAnalytics } from './StudentAnalytics';
 import { StudentDoubts } from './StudentDoubts';
 import { StudentProgress } from './StudentProgress';
 import { StudentSchedule } from './StudentSchedule';
@@ -20,7 +21,8 @@ export function StudentDashboard() {
               <Route path="/" element={<Navigate to="/student/dashboard" replace />} />
               <Route path="/dashboard" element={<StudentDashboardHome />} />
               <Route path="/profile" element={<StudentProfile />} />
-              <Route path="/assignments" element={<StudentAssignments />} />
+              <Route path="/assignments" element={<SubmissionPortal />} />
+              <Route path="/analytics" element={<StudentAnalytics />} />
               <Route path="/doubts" element={<StudentDoubts />} />
               <Route path="/progress" element={<StudentProgress />} />
               <Route path="/schedule" element={<StudentSchedule />} />

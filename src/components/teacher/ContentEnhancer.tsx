@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
@@ -6,24 +6,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { toast } from 'sonner';
-import { Sparkles, Upload, FileText, Download, RefreshCw, BookOpen, File, X, Send, Share, Settings } from 'lucide-react';
-import { useLanguage } from '../i18n/LanguageContext';
+import { Sparkles, Upload, FileText, Download, RefreshCw, File, X, Send, Paperclip } from 'lucide-react';
 
 type EnhancementType = 'Simplify Language' | 'Add Examples' | 'Include Visual Aids' | 'Add Interactive Elements' | 'Improve Structure' | 'Add Assessment Questions' | 'Make More Engaging' | 'Add Real-world Applications';
 
 export function ContentEnhancer() {
   const [isEnhancing, setIsEnhancing] = useState(false);
-  const [originalContent, setOriginalContent] = useState('');
+  const [inputContent, setInputContent] = useState('');
   const [enhancedContent, setEnhancedContent] = useState('');
   const [enhancementType, setEnhancementType] = useState('');
   const [targetAudience, setTargetAudience] = useState('');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [fileContent, setFileContent] = useState('');
-  const [activeTab, setActiveTab] = useState('upload');
   const [isPosting, setIsPosting] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const enhancementTypes: EnhancementType[] = [
     'Simplify Language',
@@ -64,10 +62,8 @@ export function ContentEnhancer() {
     }
 
     setUploadedFile(file);
-    
     const sampleContent = generateSampleContentByFileType(fileExtension, file.name);
-    setFileContent(sampleContent);
-    setOriginalContent(sampleContent);
+    setInputContent(sampleContent);
     toast.success(`File "${file.name}" uploaded successfully!`);
   };
 
@@ -144,13 +140,13 @@ File name: ${fileName}
   };
 
   const handleEnhance = () => {
-    const contentToEnhance = originalContent || fileContent;
-    if (!contentToEnhance.trim()) {
+    if (!inputContent.trim()) {
       toast.error('Please enter content or upload a file to enhance');
       return;
     }
 
     if (!enhancementType || !targetAudience) {
+      setShowSettings(true);
       toast.error('Please select enhancement type and target audience');
       return;
     }
@@ -158,9 +154,11 @@ File name: ${fileName}
     setIsEnhancing(true);
 
     setTimeout(() => {
-      const enhanced = generateEnhancedContent(contentToEnhance, enhancementType, targetAudience);
+      const enhanced = generateEnhancedContent(inputContent, enhancementType, targetAudience);
       setEnhancedContent(enhanced);
       setIsEnhancing(false);
+      setInputContent('');
+      setUploadedFile(null);
       toast.success('Content enhanced successfully!');
     }, 2000);
   };
@@ -272,306 +270,212 @@ This content has been enhanced using AI to be more suitable for ${audience}. The
   };
 
   const handleClear = () => {
-    setOriginalContent('');
+    setInputContent('');
     setEnhancedContent('');
-    setEnhancementType('');
-    setTargetAudience('');
     setUploadedFile(null);
-    setFileContent('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   };
 
   return (
-    <div className="space-y-6 fade-in">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-6 rounded-xl glass-effect border-2 border-primary/20 shadow-xl">
+    <div className="flex flex-col h-[calc(100vh-8rem)] fade-in">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-6 rounded-xl glass-effect border-2 border-primary/20 shadow-xl mb-6">
         <div>
           <h1 className="text-3xl font-bold animate-gradient-text">Content Enhancer</h1>
           <p className="text-muted-foreground mt-1">
-            Upload files or add content to enhance with AI-powered improvements
+            ChatGPT-style interface to enhance your content with AI
           </p>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <Badge variant="secondary" className="flex items-center gap-1 shadow-md animate-pulse-color">
-            <Sparkles className="h-3 w-3" />
-            AI Powered
-          </Badge>
-          <Badge variant="outline" className="flex items-center gap-1 border-primary/30 shadow-md animate-pulse-color">
-            <File className="h-3 w-3" />
-            Multi-Format Support
-          </Badge>
-          <Badge variant="outline" className="flex items-center gap-1 border-primary/30 shadow-md animate-pulse-color">
-            <Send className="h-3 w-3" />
-            Quick Publishing
-          </Badge>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowSettings(!showSettings)}
+          >
+            {showSettings ? 'Hide Settings' : 'Show Settings'}
+          </Button>
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="upload">Upload & Input</TabsTrigger>
-          <TabsTrigger value="enhance">Enhance Content</TabsTrigger>
-        </TabsList>
+      <div className="flex-1 flex gap-4 min-h-0">
+        {showSettings && (
+          <Card className="w-80 glass-effect border-2 border-primary/20 shadow-xl">
+            <CardHeader className="border-b-2 border-primary/10">
+              <CardTitle className="text-lg">Enhancement Settings</CardTitle>
+              <CardDescription>
+                Configure AI preferences
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 pt-4">
+              <div className="space-y-2">
+                <Label>Enhancement Type</Label>
+                <Select value={enhancementType} onValueChange={setEnhancementType}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {enhancementTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-        <TabsContent value="upload" className="space-y-6">
-          <div className="grid lg:grid-cols-2 gap-6">
-            <Card className="glass-effect border-2 border-primary/20 shadow-xl hover-lift transition-all duration-300">
-              <CardHeader className="border-b-2 border-primary/10">
-                <CardTitle className="flex items-center gap-2 animate-gradient-text">
-                  <Upload className="h-5 w-5 animate-breathe" />
-                  File Upload
-                </CardTitle>
-                <CardDescription>
-                  Upload documents, presentations, images, or media files for enhancement
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
-                  {uploadedFile ? (
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-center gap-2 text-green-600">
-                        <File className="h-6 w-6" />
-                        <span className="font-medium">{uploadedFile.name}</span>
+              <div className="space-y-2">
+                <Label>Target Audience</Label>
+                <Select value={targetAudience} onValueChange={setTargetAudience}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select audience" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {audiences.map((audience) => (
+                      <SelectItem key={audience} value={audience}>
+                        {audience}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button onClick={handleClear} variant="outline" className="w-full" size="sm">
+                Clear All
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        <div className="flex-1 flex flex-col min-w-0">
+          <Card className="flex-1 glass-effect border-2 border-primary/20 shadow-xl flex flex-col min-h-0">
+            <CardContent className="flex-1 flex flex-col p-6 min-h-0">
+              <div className="flex-1 overflow-y-auto space-y-4 mb-4">
+                {enhancedContent && (
+                  <div className="space-y-4">
+                    <div className="flex gap-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="h-4 w-4 text-primary" />
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        File uploaded successfully! Content extracted and ready for enhancement.
+                      <div className="flex-1 space-y-3">
+                        <div className="bg-muted p-4 rounded-lg">
+                          <pre className="whitespace-pre-wrap text-sm">{enhancedContent}</pre>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button onClick={handleCopy} variant="outline" size="sm">
+                            <FileText className="h-3 w-3 mr-2" />
+                            Copy
+                          </Button>
+                          <Button onClick={handleDownload} variant="outline" size="sm">
+                            <Download className="h-3 w-3 mr-2" />
+                            Download
+                          </Button>
+                          <Button
+                            onClick={handlePostContent}
+                            disabled={isPosting}
+                            size="sm"
+                          >
+                            {isPosting ? (
+                              <>
+                                <RefreshCw className="h-3 w-3 mr-2 animate-spin" />
+                                Posting...
+                              </>
+                            ) : (
+                              <>
+                                <Send className="h-3 w-3 mr-2" />
+                                Post to Students
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {!enhancedContent && (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center">
+                      <Sparkles className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <h3 className="font-medium text-lg mb-2">Ready to Enhance</h3>
+                      <p className="text-muted-foreground text-sm">
+                        Type your content or upload a file to get started
                       </p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setUploadedFile(null);
-                          setFileContent('');
-                          if (fileInputRef.current) {
-                            fileInputRef.current.value = '';
-                          }
-                        }}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
                     </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <Upload className="h-12 w-12 mx-auto text-muted-foreground" />
-                      <div>
-                        <h3 className="font-medium mb-2">Upload a file</h3>
-                        <p className="text-sm text-muted-foreground mb-4">
-                          Supports 20+ file formats including PDF, Word, PowerPoint, images, and more
-                        </p>
-                        <Button 
-                          variant="outline"
-                          onClick={() => fileInputRef.current?.click()}
-                        >
-                          <Upload className="h-4 w-4 mr-2" />
-                          Choose File
-                        </Button>
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          className="hidden"
-                          accept={supportedFileTypes.join(',')}
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              handleFileUpload(file);
-                            }
-                          }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground">
-                    Supported formats: PDF, Word, PowerPoint, Excel, Images, Audio, Video, and more
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="glass-effect border-2 border-primary/20 shadow-xl hover-lift transition-all duration-300">
-              <CardHeader className="border-b-2 border-primary/10">
-                <CardTitle className="flex items-center gap-2 animate-gradient-text">
-                  <BookOpen className="h-5 w-5 animate-breathe" />
-                  Manual Input
-                </CardTitle>
-                <CardDescription>
-                  Directly type or paste content that you want to enhance
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Content to Enhance</Label>
-                  <Textarea
-                    value={originalContent}
-                    onChange={(e) => setOriginalContent(e.target.value)}
-                    placeholder="Paste your lesson content, notes, or educational material here..."
-                    className="min-h-[200px]"
-                  />
-                </div>
-
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleClear}
-                  >
-                    Clear
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => setActiveTab('enhance')}
-                    disabled={!originalContent.trim() && !fileContent.trim()}
-                  >
-                    Continue to Enhancement
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="enhance" className="space-y-6">
-          <div className="grid lg:grid-cols-2 gap-6">
-            <Card className="glass-effect border-2 border-primary/20 shadow-xl hover-lift transition-all duration-300">
-              <CardHeader className="border-b-2 border-primary/10">
-                <CardTitle className="flex items-center gap-2 animate-gradient-text">
-                  <Settings className="h-5 w-5 animate-breathe" />
-                  Enhancement Settings
-                </CardTitle>
-                <CardDescription>
-                  Configure how you want your content to be enhanced
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Enhancement Type</Label>
-                  <Select value={enhancementType} onValueChange={setEnhancementType}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choose how to enhance your content" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {enhancementTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Target Audience</Label>
-                  <Select value={targetAudience} onValueChange={setTargetAudience}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your target audience" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {audiences.map((audience) => (
-                        <SelectItem key={audience} value={audience}>
-                          {audience}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Button 
-                  onClick={handleEnhance} 
-                  className="w-full"
-                  disabled={isEnhancing || (!originalContent.trim() && !fileContent.trim())}
-                >
-                  {isEnhancing ? (
-                    <>
-                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                      Enhancing Content...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-4 w-4 mr-2" />
-                      Enhance Content
-                    </>
-                  )}
-                </Button>
-
-                <div className="flex gap-2 pt-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => setActiveTab('upload')}
-                  >
-                    Back to Upload
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {enhancedContent ? (
-              <Card className="glass-effect border-2 border-primary/20 shadow-xl hover-lift transition-all duration-300">
-                <CardHeader className="border-b-2 border-primary/10">
-                  <CardTitle className="flex items-center gap-2 animate-gradient-text">
-                    <Sparkles className="h-5 w-5 animate-breathe" />
-                    Enhanced Content Preview
-                  </CardTitle>
-                  <CardDescription>
-                    AI-enhanced version of your content
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="max-h-[400px] overflow-y-auto p-4 bg-muted rounded-lg">
-                    <pre className="whitespace-pre-wrap text-sm">{enhancedContent}</pre>
                   </div>
-                  
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button onClick={handleCopy} variant="outline">
-                      <FileText className="h-4 w-4 mr-2" />
-                      Copy
-                    </Button>
-                    <Button onClick={handleDownload} variant="outline">
-                      <Download className="h-4 w-4 mr-2" />
-                      Download
-                    </Button>
-                    <Button 
-                      onClick={handlePostContent}
-                      disabled={isPosting}
-                      className="col-span-1"
+                )}
+              </div>
+
+              <div className="border-t pt-4">
+                {uploadedFile && (
+                  <div className="mb-3 flex items-center gap-2 p-2 bg-muted rounded-lg">
+                    <File className="h-4 w-4 text-primary" />
+                    <span className="text-sm flex-1 truncate">{uploadedFile.name}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setUploadedFile(null);
+                        setInputContent('');
+                        if (fileInputRef.current) {
+                          fileInputRef.current.value = '';
+                        }
+                      }}
                     >
-                      {isPosting ? (
-                        <>
-                          <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                          Posting...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="h-4 w-4 mr-2" />
-                          Post to Students
-                        </>
-                      )}
-                    </Button>
-                    <Button variant="outline">
-                      <Share className="h-4 w-4 mr-2" />
-                      Share Link
+                      <X className="h-4 w-4" />
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card className="glass-effect border-2 border-primary/20 shadow-xl">
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Sparkles className="h-12 w-12 text-muted-foreground mb-4 animate-float" />
-                  <h3 className="font-medium text-lg mb-2">No Enhanced Content Yet</h3>
-                  <p className="text-muted-foreground text-center">
-                    Configure your enhancement settings and click "Enhance Content" to see AI-powered improvements.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </TabsContent>
-      </Tabs>
+                )}
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isEnhancing}
+                  >
+                    <Paperclip className="h-4 w-4" />
+                  </Button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    className="hidden"
+                    accept={supportedFileTypes.join(',')}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        handleFileUpload(file);
+                      }
+                    }}
+                  />
+                  <Textarea
+                    ref={textareaRef}
+                    value={inputContent}
+                    onChange={(e) => setInputContent(e.target.value)}
+                    placeholder="Type your content here or attach a file..."
+                    className="flex-1 min-h-[60px] max-h-[200px] resize-none"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleEnhance();
+                      }
+                    }}
+                  />
+                  <Button
+                    onClick={handleEnhance}
+                    disabled={isEnhancing || !inputContent.trim()}
+                    size="icon"
+                  >
+                    {isEnhancing ? (
+                      <RefreshCw className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

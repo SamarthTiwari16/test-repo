@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../App';
 import {
@@ -13,7 +13,7 @@ import {
 } from '../ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
-import { Hop as Home, User, BookOpen, MessageCircle, Trophy, Calendar, LogOut } from 'lucide-react';
+import { Hop as Home, User, BookOpen, MessageCircle, Trophy, Calendar, LogOut, TrendingUp } from 'lucide-react';
 import { Logo } from '../ui/Logo';
 // Add this import at the top of StudentSidebar.tsx
 import sahayakLogo from '../../assets/logo.png';
@@ -44,6 +44,11 @@ export function StudentSidebar() {
       title: 'My Assignments',
       url: '/student/assignments',
       icon: BookOpen,
+    },
+    {
+      title: 'My Analytics',
+      url: '/student/analytics',
+      icon: TrendingUp,
     },
     {
       title: 'Ask Doubt',
