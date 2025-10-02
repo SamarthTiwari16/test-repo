@@ -10,7 +10,7 @@ import { Switch } from '../ui/switch';
 import { Calendar } from '../ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { toast } from 'sonner';
-import { Upload, FileText, CheckCircle, X, Calendar as CalendarIcon, Clock, Send, Save, Eye } from 'lucide-react';
+import { Upload, FileText, CircleCheck as CheckCircle, X, Calendar as CalendarIcon, Clock, Send, Save, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface AnswerKeyQuestion {
