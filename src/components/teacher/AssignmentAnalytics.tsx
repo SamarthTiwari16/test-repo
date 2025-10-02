@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Progress } from '../ui/progress';
 import { toast } from 'sonner';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts';
-import { Download, Filter, Users, CheckCircle, Clock, TrendingUp, Award } from 'lucide-react';
+import { Download, ListFilter as Filter, Users, CircleCheck as CheckCircle, Clock, TrendingUp, Award } from 'lucide-react';
 
 export function AssignmentAnalytics() {
   const [selectedAssignment, setSelectedAssignment] = useState('1');

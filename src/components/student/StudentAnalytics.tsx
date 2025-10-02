@@ -5,7 +5,7 @@ import { Badge } from '../ui/badge';
 import { Progress } from '../ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend } from 'recharts';
-import { Download, TrendingUp, Award, BookOpen, Target, CheckCircle } from 'lucide-react';
+import { Download, TrendingUp, Award, BookOpen, Target, CircleCheck as CheckCircle } from 'lucide-react';
 
 export function StudentAnalytics() {
   const [timeFilter, setTimeFilter] = useState('month');

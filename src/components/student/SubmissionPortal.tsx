@@ -5,7 +5,7 @@ import { Textarea } from '../ui/textarea';
 import { Badge } from '../ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { toast } from 'sonner';
-import { Upload, FileText, CheckCircle, Clock, Send, X, Download, Eye } from 'lucide-react';
+import { Upload, FileText, CircleCheck as CheckCircle, Clock, Send, X, Download, Eye } from 'lucide-react';
 
 interface Assignment {
   id: number;
